@@ -7,4 +7,6 @@ rvm:
   - "jruby-19mode"
   - "rbx-19mode"
 bundler_args: --binstubs --without debugging
+before_install:
+  - gem install bundler
 script: bin/rspec
