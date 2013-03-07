@@ -1,6 +1,6 @@
 # StandaloneValidator
 
-TODO: Write a gem description
+A library for creating PORO validators that are composable and can be used with ActiveRecord or standalone.
 
 ## Installation
 
@@ -18,7 +18,42 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'standalone_validator'
+
+NameLengthValidator = StandaloneValidator.create do
+  def initialize(min_length, attribute_name = :name)
+    @min_length = min_length
+    @attribute_name = attribute_name
+  end
+
+  include_validation do |object, result|
+    if object.send(attribute_name).length < @min_length
+      result.add_violation(attribute_name, 'should be bigger')
+    end
+  end
+end
+
+AllNamesValidator = StandaloneValidator.create do
+  include_validation NameLengthValidator, 5
+  include_validation NameLengthValidator, 3, :last_name
+end
+
+
+Person = Struct.new(:name, :last_name)
+validator = AllNamesValidator.new
+
+person = Person.new("Renato", "Zannon")
+validator.violations_of(person).any? # false
+
+other_person = Person.new("Renato", "Foo")
+validator.violations_of(other_person).any? # true
+
+validator.violations_of(other_person).each do |violation|
+  puts violation.attribute # :last_name
+  puts violation.message   # "should be bigger"
+end
+```
 
 ## Contributing
 
