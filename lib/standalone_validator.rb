@@ -15,13 +15,11 @@ class StandaloneValidator
     end
 
     def create(&block)
-      klass = Class.new(self)
-      klass.class_eval(&block)
-      klass
+      Class.new(StandaloneValidator, &block)
     end
 
-    def register_validation(name, &block)
-      NamedValidations.create(name, &block)
+    def register_as(name)
+      NamedValidations.create(name, self)
     end
 
     def validations
