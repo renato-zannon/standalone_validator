@@ -1,4 +1,3 @@
-require 'backports/basic_object'
 require 'hamster/hash'
 require 'hamster/vector'
 
