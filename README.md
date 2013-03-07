@@ -22,7 +22,7 @@ Or install it yourself as:
 ```ruby
 require 'standalone_validator'
 
-NameLengthValidator = StandaloneValidator.create do
+class NameLengthValidator < StandaloneValidator
   def initialize(min_length, attribute_name = :name)
     @min_length = min_length
     @attribute_name = attribute_name
@@ -39,7 +39,7 @@ private
   attr_reader :attribute_name
 end
 
-AllNamesValidator = StandaloneValidator.create do
+class AllNamesValidator < StandaloneValidator
   include_validation NameLengthValidator, 5
   include_validation NameLengthValidator, 4, :last_name
 end
