@@ -45,7 +45,6 @@ class StandaloneValidator
         @options    = options
       end
 
-
     private
       attr_reader :attributes, :options
 
