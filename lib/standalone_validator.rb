@@ -1,16 +1,24 @@
+require 'backports'
+require 'hamster/set'
+
 require 'standalone_validator/version'
 
 require 'standalone_validator/definitions'
-require 'standalone_validator/validations'
 require 'standalone_validator/validation_result_builder'
-
-require 'hamster'
 
 class StandaloneValidator
   class << self
+    Definitions.on_validation_registered do |name, validation|
+      define_singleton_method(name) do |*args, &block|
+        include_validation(validation, *args, &block)
+      end
+    end
+
+    require 'standalone_validator/validations'
+
     def create(&block)
       klass = Class.new(self)
-      Definitions.new(klass, &block).apply
+      klass.class_eval(&block)
       klass
     end
 
@@ -24,9 +32,11 @@ class StandaloneValidator
       end
     end
 
-    def add_validation(validation)
+  private
+
+    def include_validation(*args, &block)
+      validation = Definitions.coerce_to_validation(*args, &block)
       @validations = validations.add(validation)
-      validation
     end
   end
 
