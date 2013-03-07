@@ -33,16 +33,22 @@ class StandaloneValidator
       self
     end
 
+    OK = new({})
+
+    include Enumerable
+
+    def each(&block)
+      violations.each(&block)
+    end
+
+    def empty
+      violations.empty?
+    end
+
     def ok?
       violations.empty?
     end
 
-    alias_method :any?, :ok?
-
-    def has_violations?
-      not ok?
-    end
-
-    OK = new({})
+    alias_method :valid?, :ok?
   end
 end
