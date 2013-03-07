@@ -1,4 +1,5 @@
 # StandaloneValidator
+[![Build Status](https://secure.travis-ci.org/riccieri/standalone_validator.png)](http://travis-ci.org/riccieri/standalone_validator)
 
 A library for creating PORO validators that are composable and can be used with ActiveRecord or standalone.
 
