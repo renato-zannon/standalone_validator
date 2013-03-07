@@ -33,11 +33,15 @@ NameLengthValidator = StandaloneValidator.create do
       result.add_violation(attribute_name, 'should be bigger')
     end
   end
+
+private
+
+  attr_reader :attribute_name
 end
 
 AllNamesValidator = StandaloneValidator.create do
   include_validation NameLengthValidator, 5
-  include_validation NameLengthValidator, 3, :last_name
+  include_validation NameLengthValidator, 4, :last_name
 end
 
 
@@ -45,14 +49,14 @@ Person = Struct.new(:name, :last_name)
 validator = AllNamesValidator.new
 
 person = Person.new("Renato", "Zannon")
-validator.violations_of(person).any? # false
+puts validator.violations_of(person).any? # false
 
 other_person = Person.new("Renato", "Foo")
-validator.violations_of(other_person).any? # true
+puts validator.violations_of(other_person).any? # true
 
 validator.violations_of(other_person).each do |violation|
-  puts violation.attribute # :last_name
-  puts violation.message   # "should be bigger"
+  puts violation.attribute.inspect # :last_name
+  puts violation.message.inspect   # "should be bigger"
 end
 ```
 
