@@ -1,5 +1,5 @@
 require 'standalone_validator/validation_result_builder'
-require 'hamster'
+require 'hamster/list'
 
 class StandaloneValidator
   class ValidationResult
