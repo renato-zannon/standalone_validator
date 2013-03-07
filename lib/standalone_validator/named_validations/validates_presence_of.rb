@@ -1,23 +1,20 @@
 require 'standalone_validator'
+require_relative 'common_rails_options'
 
-module NamedValidations
-  class ValidatesPresenceOf < StandaloneValidator
-    register_as :validates_presence_of
+class StandaloneValidator
+  module NamedValidations
+    class ValidatesPresenceOf < StandaloneValidator
+      register_as :validates_presence_of
 
-    def initialize(attribute_name)
-      @attribute_name = attribute_name
-    end
+      include CommonRailsOptions
 
-    include_validation do |object, result|
-      value = object.send(attribute_name)
-
-      if value.blank?
-        result.add_violation(attribute_name, :blank)
+      include_validation do |object, result|
+        each_validated_attribute_on(object) do |attribute_name, value|
+          if value.blank?
+            result.add_violation(attribute_name, :blank)
+          end
+        end
       end
     end
-
-  private
-
-    attr_reader :attribute_name
   end
 end
