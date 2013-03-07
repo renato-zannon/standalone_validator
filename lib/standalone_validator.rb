@@ -9,17 +9,19 @@ require 'standalone_validator/validation_result_builder'
 class StandaloneValidator
   class << self
     Definitions.on_validation_registered do |name, validation|
-      define_singleton_method(name) do |*args, &block|
+      define_method(name) do |*args, &block|
         include_validation(validation, *args, &block)
       end
     end
-
-    require 'standalone_validator/validations'
 
     def create(&block)
       klass = Class.new(self)
       klass.class_eval(&block)
       klass
+    end
+
+    def register_validation(name, &block)
+      NamedValidations.create(name, &block)
     end
 
     def validations
@@ -39,6 +41,8 @@ class StandaloneValidator
       @validations = validations.add(validation)
     end
   end
+
+  require 'standalone_validator/named_validations'
 
   def violations_of(object)
     builder = ValidationResultBuilder.new
