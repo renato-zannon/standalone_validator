@@ -50,5 +50,11 @@ class StandaloneValidator
     end
 
     alias_method :valid?, :ok?
+
+    def [](attribute)
+      violations.select do |violation|
+        violation.attribute == attribute
+      end
+    end
   end
 end
