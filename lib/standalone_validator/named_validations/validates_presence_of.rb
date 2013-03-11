@@ -15,6 +15,10 @@ class StandaloneValidator
           end
         end
       end
+
+      def requires_field?(field)
+        attributes.include?(field.to_sym)
+      end
     end
   end
 end

@@ -32,11 +32,25 @@ class StandaloneValidator
       end
     end
 
+    def required_fields
+      return @required_fields if defined?(@required_fields)
+
+      if superclass.kind_of?(StandaloneValidator)
+        @required_fields = superclass.required_fields
+      else
+        @required_fields = Hamster.set
+      end
+    end
+
   private
 
     def include_validation(*args, &block)
       validation = Definitions.coerce_to_validation(*args, &block)
       @validations = validations.add(validation)
+    end
+
+    def requires_field(name)
+      @required_fields = required_fields.add(name.to_sym)
     end
   end
 
@@ -65,6 +79,16 @@ class StandaloneValidator
     validation_result = violations_of(object)
     validation_result.add_errors_to(object.errors)
     validation_result
+  end
+
+  def requires_field?(field)
+    return true if self.class.required_fields.include?(field.to_sym)
+
+    validations.any? do |validation|
+      if validation.respond_to?(:requires_field?)
+        validation.requires_field?(field)
+      end
+    end
   end
 
 private

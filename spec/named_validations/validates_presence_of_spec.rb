@@ -43,5 +43,11 @@ module StandaloneValidator::NamedValidations
       result = validator.violations_of(doesnt_trigger)
       expect(result).to be_ok
     end
+
+    it "requires the attributes it was given on construction" do
+      validator = ValidatesPresenceOf.new :foo
+      expect(validator.requires_field?(:foo)).to be_true
+      expect(validator.requires_field?(:bar)).to be_false
+    end
   end
 end
