@@ -25,6 +25,8 @@ class StandaloneValidator
       @violations = violations.to_list
     end
 
+    OK = new({})
+
     def add_errors_to(errors_object)
       violations.each do |violation|
         violation.add_to(errors_object)
@@ -32,8 +34,6 @@ class StandaloneValidator
 
       self
     end
-
-    OK = new({})
 
     include Enumerable
 
@@ -55,6 +55,21 @@ class StandaloneValidator
       violations.select do |violation|
         violation.attribute == attribute
       end
+    end
+
+    def of_type(type)
+      subset { |violation| violation.type == type }
+    end
+
+    def on_attribute(attribute)
+      subset { |violation| violation.attribute == attribute }
+    end
+
+  private
+
+    def subset(&block)
+      self.class.new(:violations       => violations.select(&block),
+                     :validated_object => validated_object)
     end
   end
 end
