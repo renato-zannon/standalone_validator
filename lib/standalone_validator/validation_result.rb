@@ -41,7 +41,7 @@ class StandaloneValidator
       violations.each(&block)
     end
 
-    def empty
+    def empty?
       violations.empty?
     end
 
