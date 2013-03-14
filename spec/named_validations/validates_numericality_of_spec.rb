@@ -64,7 +64,7 @@ module StandaloneValidator::NamedValidations
         let(:validator) { ValidatesNumericalityOf.new(:foo, :allow_blank => true) }
 
         it "ignores 'blank' values" do
-          object.foo = stub(:blank? => true)
+          object.foo = stub(:blank? => true, :to_f => 0)
           violations = validator.violations_of(object).on_attribute(:foo)
           expect(violations).to be_empty
         end
@@ -74,7 +74,7 @@ module StandaloneValidator::NamedValidations
         let(:validator) { ValidatesNumericalityOf.new(:foo) }
 
         it "does not ignore 'blank' values" do
-          object.foo = stub(:blank? => true)
+          object.foo = stub(:blank? => true, :to_f => 0)
           violations = validator.violations_of(object).on_attribute(:foo)
           expect(violations.of_type(:not_a_number)).to_not be_empty
         end
