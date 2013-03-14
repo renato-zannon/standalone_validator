@@ -10,10 +10,11 @@ class StandaloneValidator
       self
     end
 
-    def add_violation(attribute_name, violation_type_or_message)
+    def add_violation(attribute_name, violation_type_or_message, options = {})
       creation_attributes = {
         :attribute     => attribute_name.to_sym,
-        :source_object => validated_object
+        :source_object => validated_object,
+        :options       => options,
       }
 
       if violation_type_or_message.kind_of?(Symbol)
