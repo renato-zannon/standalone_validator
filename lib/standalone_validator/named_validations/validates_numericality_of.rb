@@ -6,10 +6,10 @@ class StandaloneValidator
     class ValidatesNumericalityOf < StandaloneValidator
       register_as :validates_numericality_of
 
+      include CommonRailsOptions
+
       # Stolen from ActiveSupport
       INTEGER_REGEX = /\A[+-]?\d+\Z/.freeze
-
-      include CommonRailsOptions
 
       COMPARISON_OPTIONS = {
         :greater_than             => lambda { |base, x| x >  base },
@@ -23,17 +23,29 @@ class StandaloneValidator
         each_validated_attribute_on(object) do |attribute_name, value|
           next if ignore_value?(value)
 
-          unless coercible_to_number?(value)
-            result.add_violation(attribute_name, :not_a_number)
-          end
+          begin
+            coerced_value = coerce_to_number(value)
 
-          each_comparison_violation_of(value) do |violation_name|
-            result.add_violation(attribute_name, violation_name)
+            each_comparison_violation_of(coerced_value) do |violation_name|
+              result.add_violation(attribute_name, violation_name)
+            end
+          rescue TypeError, ArgumentError
+            result.add_violation(attribute_name, :not_a_number)
           end
         end
       end
 
     private
+
+      def ignore_value?(value)
+        if options[:allow_nil]
+          value.nil?
+        elsif options[:allow_blank]
+          value.blank?
+        else
+          false
+        end
+      end
 
       def each_comparison_violation_of(value)
         selected_comparisons.each do |option, (base, check)|
@@ -52,35 +64,15 @@ class StandaloneValidator
         end
       end
 
-      def coercible_to_number?(value)
+      def coerce_to_number(value)
         if options[:only_integer]
-          is_integer?(value)
+          raise ArgumentError unless value.to_s =~ INTEGER_REGEX
+          Kernel.Integer(value)
         else
-          is_number?(value)
+          Kernel.Float(value)
         end
       end
 
-      def ignore_value?(value)
-        if options[:allow_nil]
-          value.nil?
-        elsif options[:allow_blank]
-          value.blank?
-        else
-          false
-        end
-      end
-
-      def is_integer?(value)
-        value.is_a?(Integer) || value.to_s =~ INTEGER_REGEX
-      end
-
-      def is_number?(value)
-        return true if is_integer?(value)
-
-        !!Kernel.Float(value)
-      rescue ArgumentError, TypeError
-        false
-      end
     end
   end
 end
