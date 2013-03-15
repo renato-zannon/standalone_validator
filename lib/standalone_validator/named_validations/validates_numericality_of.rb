@@ -26,8 +26,8 @@ class StandaloneValidator
           begin
             coerced_value = coerce_to_number(value)
 
-            each_comparison_violation_of(coerced_value) do |violation_name|
-              result.add_violation(attribute_name, violation_name)
+            each_comparison_violation_of(coerced_value) do |violation, base|
+              result.add_violation(attribute_name, violation, :count => base)
             end
           rescue TypeError, ArgumentError
             result.add_violation(attribute_name, :not_a_number)
@@ -49,7 +49,7 @@ class StandaloneValidator
 
       def each_comparison_violation_of(value)
         selected_comparisons.each do |option, (base, check)|
-          yield(option) unless check.call(base, value)
+          yield(option, base) unless check.call(base, value)
         end
 
         self
