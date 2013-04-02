@@ -56,11 +56,11 @@ class StandaloneValidator
 
   require 'standalone_validator/named_validations'
 
-  def violations_of(object)
-    builder = ValidationResultBuilder.new
+  def violations_of(object, appliable_validations = validations)
+    builder = StandaloneValidator::ValidationResultBuilder.new
     builder.validated_object = object
 
-    validations.each do |validation|
+    appliable_validations.each do |validation|
       if validation.respond_to?(:to_proc)
         result = instance_exec(object, &validation)
       else
