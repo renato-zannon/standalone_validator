@@ -64,7 +64,7 @@ module StandaloneValidator::NamedValidations
         let(:validator) { ValidatesNumericalityOf.new(:foo, :allow_blank => true) }
 
         it "ignores 'blank' values" do
-          object.foo = stub(:blank? => true, :to_f => 0)
+          object.foo = double(:blank? => true, :to_f => 0)
           violations = validator.violations_of(object).on_attribute(:foo)
           expect(violations).to be_empty
         end
@@ -74,7 +74,7 @@ module StandaloneValidator::NamedValidations
         let(:validator) { ValidatesNumericalityOf.new(:foo) }
 
         it "does not ignore 'blank' values" do
-          object.foo = stub(:blank? => true, :to_f => 0)
+          object.foo = double(:blank? => true, :to_f => 0)
           violations = validator.violations_of(object).on_attribute(:foo)
           expect(violations.of_type(:not_a_number)).to_not be_empty
         end
@@ -140,8 +140,8 @@ module StandaloneValidator::NamedValidations
     it "accepts an :if condition that can block the validation" do
       validator = ValidatesNumericalityOf.new :foo, :if => :bar
 
-      triggers       = stub(:foo => "not a number", :bar => true)
-      doesnt_trigger = stub(:foo => "not a number", :bar => false)
+      triggers       = double(:foo => "not a number", :bar => true)
+      doesnt_trigger = double(:foo => "not a number", :bar => false)
 
       result = validator.violations_of(triggers)
       expect(result).to_not be_ok
@@ -153,8 +153,8 @@ module StandaloneValidator::NamedValidations
     it "accepts an :unless condition that can block the validation" do
       validator = ValidatesNumericalityOf.new :foo, :unless => :bar
 
-      triggers       = stub(:foo => "not a number", :bar => false)
-      doesnt_trigger = stub(:foo => "not a number", :bar => true)
+      triggers       = double(:foo => "not a number", :bar => false)
+      doesnt_trigger = double(:foo => "not a number", :bar => true)
 
       result = validator.violations_of(triggers)
       expect(result).to_not be_ok

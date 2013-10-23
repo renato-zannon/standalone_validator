@@ -2,8 +2,8 @@ require 'spec_helper'
 require 'standalone_validator'
 
 describe "core features" do
-  let(:valid_object)   { stub(:valid? => true) }
-  let(:invalid_object) { stub(:valid? => false) }
+  let(:valid_object)   { double(:valid? => true) }
+  let(:invalid_object) { double(:valid? => false) }
 
   it "accepts inline lambdas via 'include_validation'" do
     validator_class = StandaloneValidator.create do
