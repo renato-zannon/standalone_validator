@@ -2,13 +2,15 @@ require 'virtus'
 
 class StandaloneValidator
   class Violation
-    include Virtus::ValueObject
+    include Virtus.value_object
 
-    attribute :source_object, Object
-    attribute :attribute,     Symbol, :default => :base
-    attribute :type,          Symbol, :default => :invalid
-    attribute :message,       String, :default => nil
-    attribute :options,       Hash,   :default => {}
+    values do
+      attribute :source_object, Object
+      attribute :attribute,     Symbol, :default => :base
+      attribute :type,          Symbol, :default => :invalid
+      attribute :message,       String, :default => nil
+      attribute :options,       Hash,   :default => {}
+    end
 
     def add_to(errors_object)
       errors_object.add(attribute, message || type, options)
