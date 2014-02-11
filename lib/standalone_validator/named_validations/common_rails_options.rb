@@ -9,14 +9,18 @@ class StandaloneValidator
         end
       end
 
-      ALWAYS_TRUE = Proc.new { true }
+      ALWAYS_TRUE = ->(*) { true }.freeze
 
       def self.condition_for(options)
         if options.has_key?(:if)
           options[:if].to_proc
         elsif options.has_key?(:unless)
           reverse_condition = options[:unless].to_proc
-          Proc.new { |*args| not reverse_condition.call(*args) }
+
+          ->(*args) {
+            negates = instance_exec(*args, &reverse_condition)
+            not negates
+          }
         else
           ALWAYS_TRUE
         end
@@ -29,7 +33,7 @@ class StandaloneValidator
       module ClassMethods
         def include_validation(&block)
           super do |object, result|
-            if condition.call(object)
+            if instance_exec(object, &condition)
               instance_exec(object, result, &block)
             end
           end
