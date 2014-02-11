@@ -17,7 +17,7 @@ class StandaloneValidator
       end
 
       def requires_field?(field, object)
-        attributes.include?(field.to_sym) && condition.call(object)
+        attributes.include?(field.to_sym) && evaluate_condition(object)
       end
     end
   end

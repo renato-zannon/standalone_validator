@@ -33,7 +33,7 @@ class StandaloneValidator
       module ClassMethods
         def include_validation(&block)
           super do |object, result|
-            if instance_exec(object, &condition)
+            if evaluate_condition(object)
               instance_exec(object, result, &block)
             end
           end
@@ -49,6 +49,10 @@ class StandaloneValidator
 
     private
       attr_reader :attributes, :options
+
+      def evaluate_condition(object)
+        instance_exec(object, &condition)
+      end
 
       def condition
         @condition ||= CommonRailsOptions.condition_for(options)
