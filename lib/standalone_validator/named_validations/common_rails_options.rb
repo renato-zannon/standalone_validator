@@ -29,8 +29,6 @@ class StandaloneValidator
       module ClassMethods
         def include_validation(&block)
           super do |object, result|
-            condition = CommonRailsOptions.condition_for(options)
-
             if condition.call(object)
               instance_exec(object, result, &block)
             end
@@ -47,6 +45,10 @@ class StandaloneValidator
 
     private
       attr_reader :attributes, :options
+
+      def condition
+        @condition ||= CommonRailsOptions.condition_for(options)
+      end
 
       def each_validated_attribute_on(object)
         return to_enum(:each_validated_attribute, object) unless block_given?

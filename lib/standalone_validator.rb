@@ -81,12 +81,12 @@ class StandaloneValidator
     validation_result
   end
 
-  def requires_field?(field)
+  def requires_field?(field, object)
     return true if self.class.required_fields.include?(field.to_sym)
 
     validations.any? do |validation|
       if validation.respond_to?(:requires_field?)
-        validation.requires_field?(field)
+        validation.requires_field?(field, object)
       end
     end
   end

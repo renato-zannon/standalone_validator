@@ -46,8 +46,23 @@ module StandaloneValidator::NamedValidations
 
     it "requires the attributes it was given on construction" do
       validator = ValidatesPresenceOf.new :foo
-      expect(validator.requires_field?(:foo)).to be_true
-      expect(validator.requires_field?(:bar)).to be_false
+      expect(validator.requires_field?(:foo, nil)).to be_true
+      expect(validator.requires_field?(:bar, nil)).to be_false
+    end
+
+    context "if it was given a conditional" do
+      it "uses the conditional to decide if a field is required" do
+        validator = ValidatesPresenceOf.new(:foo, if: :bar)
+
+        requires       = double(foo: blank_value, bar: true)
+        doesnt_require = double(foo: blank_value, bar: false)
+
+        result = validator.requires_field?(:foo, requires)
+        expect(result).to be_true
+
+        result = validator.requires_field?(:foo, doesnt_require)
+        expect(result).to be_false
+      end
     end
   end
 end
